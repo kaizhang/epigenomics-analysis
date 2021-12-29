@@ -1,0 +1,18 @@
+name: quarto-publish
+
+on: 
+  branch: main
+
+jobs:
+  quarto-linux:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: quarto-dev/quarto-actions/install-quarto@v1
+     
+      - name: Publish to github pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./html_build
+          publish_branch: gh-pages
+          force_orphan: true       
