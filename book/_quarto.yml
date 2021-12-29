@@ -2,9 +2,14 @@ project:
   type: book
 
 book:
-  title: "mybook"
-  author: "Jane Doe"
-  date: "12/29/2021"
+  title: "Single-cell ATAC-seq analysis pipeline"
+  author: "Kai Zhang"
+  cover-image: images/cover.png
+  site-url: https://kzhang.org/Book-scATAC-seq/
+  repo-url: https://github.com/kaizhang/Book-scATAC-seq/
+  repo-branch: main
+  repo-actions: [edit]
+  sharing: [twitter, facebook, linkedin]
   chapters:
     - index.qmd
     - intro.qmd
