@@ -1,26 +1,25 @@
-name: quarto-publish
-
-on: 
+on:
+  workflow_dispatch:
   push:
-    branches:
-      - main
+    branches: main
+
+name: Quarto Publish
 
 jobs:
-  quarto-linux:
+  build-deploy:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
-      - uses: quarto-dev/quarto-actions/install-quarto@v1
+      - name: Check out repository
+        uses: actions/checkout@v2
 
-      - uses: actions/checkout@v2
+      - name: Set up Quarto
+        uses: quarto-dev/quarto-actions/setup@v2
+
+      - name: Render and Publish
+        uses: quarto-dev/quarto-actions/publish@v2
         with:
-          submodules: 'recursive'
-
-      - run: quarto render --to html
-
-      - name: Publish to github pages
-        uses: peaceiris/actions-gh-pages@v3
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./_book
-          publish_branch: gh-pages
-          force_orphan: true       
+          target: gh-pages
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
