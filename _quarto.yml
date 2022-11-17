@@ -4,7 +4,7 @@ project:
 book:
   title: "A guide to the single-cell epigenomics analysis"
   author: "Kai Zhang"
-  google-analytics: "G-4T647M9GLJ"
+  google-analytics: "G-3C1W433VY8"
   site-url: https://kzhang.org/epigenomcis-analysis/
   repo-url: https://github.com/kaizhang/epigenomics-analysis/
   repo-branch: main
