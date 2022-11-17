@@ -1,1 +1,1 @@
-Sitemap: https://kzhang.org/Book-scATAC-seq/sitemap.xml
+Sitemap: https://kzhang.org/epigenomcis-analysis/sitemap.xml

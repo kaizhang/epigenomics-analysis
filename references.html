@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Single-cell ATAC-seq analysis pipeline - References</title>
+<title>A guide to the single-cell epigenomics analysis - References</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -49,7 +49,7 @@ div.csl-indent {
 <script src="site_libs/quarto-search/fuse.min.js"></script>
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
-<link href="./summary.html" rel="prev">
+<link href="./dim_reduct.html" rel="prev">
 <script src="site_libs/quarto-html/quarto.js"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
 <script src="site_libs/quarto-html/tippy.umd.min.js"></script>
@@ -78,14 +78,14 @@ div.csl-indent {
     "search-submit-button-title": "Submit"
   }
 }</script>
-<script async="" src="https://www.googletagmanager.com/gtag/js?id=G-4T647M9GLJ"></script>
+<script async="" src="https://www.googletagmanager.com/gtag/js?id=G-3C1W433VY8"></script>
 
 <script type="text/javascript">
 
 window.dataLayer = window.dataLayer || [];
 function gtag(){dataLayer.push(arguments);}
 gtag('js', new Date());
-gtag('config', 'G-4T647M9GLJ', { 'anonymize_ip': true});
+gtag('config', 'G-3C1W433VY8', { 'anonymize_ip': true});
 </script>
 
 
@@ -110,9 +110,9 @@ gtag('config', 'G-4T647M9GLJ', { 'anonymize_ip': true});
   <nav id="quarto-sidebar" class="sidebar collapse sidebar-navigation floating overflow-auto">
     <div class="pt-lg-2 mt-2 text-left sidebar-header">
     <div class="sidebar-title mb-0 py-0">
-      <a href="./">Single-cell ATAC-seq analysis pipeline</a> 
+      <a href="./">A guide to the single-cell epigenomics analysis</a> 
         <div class="sidebar-tools-main">
-    <a href="https://github.com/kaizhang/Book-scATAC-seq/" title="Source Code" class="sidebar-tool px-1"><i class="bi bi-github"></i></a>
+    <a href="https://github.com/kaizhang/epigenomics-analysis/" title="Source Code" class="sidebar-tool px-1"><i class="bi bi-github"></i></a>
     <a href="" title="Share" id="sidebar-tool-dropdown-0" class="sidebar-tool dropdown-toggle px-1" data-bs-toggle="dropdown" aria-expanded="false"><i class="bi bi-share"></i></a>
     <ul class="dropdown-menu" aria-labelledby="sidebar-tool-dropdown-0">
         <li>
@@ -156,12 +156,12 @@ gtag('config', 'G-4T647M9GLJ', { 'anonymize_ip': true});
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./qc.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Per-cell Quality Control</span></a>
+  <a href="./file_format.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Input data format</span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./summary.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Summary</span></a>
+  <a href="./dim_reduct.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Dimension reduction</span></a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -197,9 +197,10 @@ gtag('config', 'G-4T647M9GLJ', { 'anonymize_ip': true});
 </header>
 
 <div id="refs" class="references csl-bib-body hanging-indent" role="doc-bibliography">
-<div id="ref-knuth84" class="csl-entry" role="doc-biblioentry">
-Knuth, Donald E. 1984. <span>“Literate Programming.”</span> <em>Comput.
-J.</em> 27 (2): 97–111. <a href="https://doi.org/10.1093/comjnl/27.2.97">https://doi.org/10.1093/comjnl/27.2.97</a>.
+<div id="ref-Fang.Ren.2021" class="csl-entry" role="doc-biblioentry">
+Fang, Rongxin, Sebastian Preissl, Yang Li, Xiaomeng Hou, Jacinta Lucero,
+Xinxin Wang, Amir Motamedi, et al. 2021. <span>“<span class="nocase">Comprehensive analysis of single cell ATAC-seq data with
+SnapATAC</span>.”</span> <em>Nature Communications</em> 12 (1): 1337. <a href="https://doi.org/10.1038/s41467-021-21583-9">https://doi.org/10.1038/s41467-021-21583-9</a>.
 </div>
 </div>
 
@@ -341,8 +342,8 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="./summary.html" class="pagination-link">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Summary</span></span>
+      <a href="./dim_reduct.html" class="pagination-link">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Dimension reduction</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">

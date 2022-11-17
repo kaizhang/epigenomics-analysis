@@ -6,9 +6,8 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="author" content="Kai Zhang">
 
-<title>A guide to the single-cell epigenomics analysis</title>
+<title>A guide to the single-cell epigenomics analysis - 3&nbsp; Dimension reduction</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -21,6 +20,25 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1.6em;
   vertical-align: middle;
 }
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}
 </style>
 
 
@@ -31,7 +49,8 @@ ul.task-list li input[type="checkbox"] {
 <script src="site_libs/quarto-search/fuse.min.js"></script>
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
-<link href="./intro.html" rel="next">
+<link href="./references.html" rel="next">
+<link href="./file_format.html" rel="prev">
 <script src="site_libs/quarto-html/quarto.js"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
 <script src="site_libs/quarto-html/tippy.umd.min.js"></script>
@@ -70,6 +89,7 @@ gtag('js', new Date());
 gtag('config', 'G-3C1W433VY8', { 'anonymize_ip': true});
 </script>
 
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
 
 </head>
 
@@ -79,7 +99,7 @@ gtag('config', 'G-3C1W433VY8', { 'anonymize_ip': true});
   <header id="quarto-header" class="headroom fixed-top">
   <nav class="quarto-secondary-nav" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
     <div class="container-fluid d-flex justify-content-between">
-      <h1 class="quarto-secondary-nav-title">A guide to the single-cell epigenomics analysis</h1>
+      <h1 class="quarto-secondary-nav-title"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Dimension reduction</span></h1>
       <button type="button" class="quarto-btn-toggle btn" aria-label="Show secondary navigation">
         <i class="bi bi-chevron-right"></i>
       </button>
@@ -128,7 +148,7 @@ gtag('config', 'G-3C1W433VY8', { 'anonymize_ip': true});
     <ul class="list-unstyled mt-1">
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./index.html" class="sidebar-item-text sidebar-link active">Preface</a>
+  <a href="./index.html" class="sidebar-item-text sidebar-link">Preface</a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -143,7 +163,7 @@ gtag('config', 'G-3C1W433VY8', { 'anonymize_ip': true});
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./dim_reduct.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Dimension reduction</span></a>
+  <a href="./dim_reduct.html" class="sidebar-item-text sidebar-link active"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Dimension reduction</span></a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -160,28 +180,23 @@ gtag('config', 'G-3C1W433VY8', { 'anonymize_ip': true});
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#preface" id="toc-preface" class="nav-link active" data-scroll-target="#preface">Preface</a></li>
+  <li><a href="#spectral-embedding" id="toc-spectral-embedding" class="nav-link active" data-scroll-target="#spectral-embedding"><span class="toc-section-number">3.1</span>  Spectral embedding</a></li>
+  <li><a href="#nyström-method" id="toc-nyström-method" class="nav-link" data-scroll-target="#nyström-method"><span class="toc-section-number">3.2</span>  Nyström method</a></li>
   </ul>
-<div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/kaizhang/epigenomics-analysis/edit/main/index.qmd" class="toc-action">Edit this page</a></p><p><a href="https://github.com/kaizhang/epigenomics-analysis/issues/new" class="toc-action">Report an issue</a></p></div></div></nav>
+<div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/kaizhang/epigenomics-analysis/edit/main/dim_reduct.qmd" class="toc-action">Edit this page</a></p><p><a href="https://github.com/kaizhang/epigenomics-analysis/issues/new" class="toc-action">Report an issue</a></p></div></div></nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title d-none d-lg-block">A guide to the single-cell epigenomics analysis</h1>
+<h1 class="title d-none d-lg-block"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Dimension reduction</span></h1>
 </div>
 
 
 
 <div class="quarto-title-meta">
 
-    <div>
-    <div class="quarto-title-meta-heading">Author</div>
-    <div class="quarto-title-meta-contents">
-             <p>Kai Zhang </p>
-          </div>
-  </div>
     
   
     
@@ -190,11 +205,45 @@ gtag('config', 'G-3C1W433VY8', { 'anonymize_ip': true});
 
 </header>
 
-<section id="preface" class="level1 unnumbered">
-<h1 class="unnumbered">Preface</h1>
-<p>This book is used to complement the documentation of the SnapATAC2 Python/Rust package.</p>
+<p>Single-cell ATAC-seq (scATAC-seq) produces large and highly sparse cell by feature count matrix. Working directly with such a large matrix is very inconvinent and computational intensive. Therefore typically, we need to reduce the dimensionality of the count matrix before any downstream analysis. Most of the counts in this matrix are very small. For example, ~50% of the counts are 1 in deeply sequenced scATAC-seq data. As a result, many methods treat the count matrix as a binary matrix.</p>
+<p>Different from most existing approaches, the dimension reduction method used in SnapATAC2 is a pairwise-similarity based method, which requires defining and computing similarity between each pair of cells in the data. This method was first proposed in <span class="citation" data-cites="Fang.Ren.2021">(<a href="references.html#ref-Fang.Ren.2021" role="doc-biblioref">Fang et al. 2021</a>)</span>, the version 1 of SnapATAC, and was called “diffusion map”. In SnapATAC2, we reformulate this approach as spectral embedding, <em>a.k.a.</em>, Laplacian eigenmaps.</p>
+<section id="spectral-embedding" class="level2" data-number="3.1">
+<h2 data-number="3.1" class="anchored" data-anchor-id="spectral-embedding"><span class="header-section-number">3.1</span> Spectral embedding</h2>
+<p>Start with <span class="math inline">\(n \times p\)</span> cell by feature count matrix <span class="math inline">\(M\)</span>, we first compute the <span class="math inline">\(n \times n\)</span> pairwise similarity matrix <span class="math inline">\(S\)</span> such that <span class="math inline">\(S_{ij} = \delta(M_{i*}, M_{j*})\)</span>, where <span class="math inline">\(\delta: \mathbb{R}^p \times \mathbb{R}^p \rightarrow \mathbb{R}\)</span> is the function defines the similarity between any two cells. Typical choices of <span class="math inline">\(\delta\)</span> include the jaccard index and the cosine similarity.</p>
+<p>We then compute the normalized graph Laplacian <span class="math inline">\(L = I - D^{-1/2} S D^{-1/2}\)</span>, where <span class="math inline">\(I\)</span> is the identity matrix and <span class="math inline">\(D\)</span> is a diagonal matrix such that <span class="math inline">\(D_{ii} = \sum_k S_{ik}\)</span>.</p>
+<p>The eigenvectors correspond to the k+1-smallest eigenvalues of <span class="math inline">\(L\)</span> are selected as the lower dimensional embedding.</p>
+</section>
+<section id="nyström-method" class="level2" data-number="3.2">
+<h2 data-number="3.2" class="anchored" data-anchor-id="nyström-method"><span class="header-section-number">3.2</span> Nyström method</h2>
+<p>For samples with large numbers of cells, computing the full similarity matrix is slow and requires a large amount of memory. To address this limitation and increase the scalability of spectral embedding, we used the Nystrom method to perform a low-rank approximation of the full similarity matrix.</p>
+<p>We will be focusing on generating an approximation <span class="math inline">\(\tilde{S}\)</span> of <span class="math inline">\(S\)</span> based on a sample of <span class="math inline">\(l ≪ n\)</span> of its columns.</p>
+<p>Suppose <span class="math inline">\(S = \begin{bmatrix} A &amp; B \\ B^T &amp; C \end{bmatrix}\)</span> and columns <span class="math inline">\(\begin{bmatrix} A \\ B^T \end{bmatrix}\)</span> are our samples. We first perform eigendecomposition on <span class="math inline">\(A = U \Lambda U^T\)</span>. The nystrom method approximates the eigenvectors of matrix <span class="math inline">\(S\)</span> by <span class="math inline">\(\tilde{U} = \begin{bmatrix} U \\ B^T U \Lambda^{-1} \end{bmatrix}\)</span>.</p>
+<p>We can then compute <span class="math inline">\(\tilde{S}\)</span>:</p>
+<p><span class="math display">\[
+\begin{aligned}
+\tilde{S} &amp;= \tilde{U} \Lambda \tilde{U}^T \\
+          &amp;= \begin{bmatrix} U \\ B^T U \Lambda^{-1} \end{bmatrix}
+             \Lambda
+             \begin{bmatrix} U^T &amp; \Lambda^{-1}U^TB \end{bmatrix} \\
+          &amp;= \begin{bmatrix}
+               U \Lambda U^T &amp; U \Lambda \Lambda^{-1} U^T B \\
+               B^T U \Lambda^{-1} \Lambda U^T &amp; B^T U \Lambda^{-1} \Lambda \Lambda^{-1} U^T B
+             \end{bmatrix} \\
+          &amp;= \begin{bmatrix} A &amp; B \\ B^T &amp; B^T U \Lambda^{-1} U^T B \end{bmatrix}
+\end{aligned}
+\]</span></p>
+<p>In practice, <span class="math inline">\(\tilde{S}\)</span> does not need to be computed. Instead, it is used implicitly to estimate the degree normalization vector:</p>
+<p><span class="math display">\[
+\tilde{d} = \tilde{S}\mathbf{1} = \begin{bmatrix}A\mathbf{1} + B\mathbf{1} \\ B^T \mathbf{1} + B^T A^{-1} B\mathbf{1}
+\end{bmatrix}
+\]</span></p>
 
 
+<div id="refs" class="references csl-bib-body hanging-indent" role="doc-bibliography" style="display: none">
+<div id="ref-Fang.Ren.2021" class="csl-entry" role="doc-biblioentry">
+Fang, Rongxin, Sebastian Preissl, Yang Li, Xiaomeng Hou, Jacinta Lucero, Xinxin Wang, Amir Motamedi, et al. 2021. <span>“<span class="nocase">Comprehensive analysis of single cell ATAC-seq data with SnapATAC</span>.”</span> <em>Nature Communications</em> 12 (1): 1337. <a href="https://doi.org/10.1038/s41467-021-21583-9">https://doi.org/10.1038/s41467-021-21583-9</a>.
+</div>
+</div>
 </section>
 
 </main> <!-- /main -->
@@ -333,10 +382,13 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
+      <a href="./file_format.html" class="pagination-link">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Input data format</span></span>
+      </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="./intro.html" class="pagination-link">
-        <span class="nav-page-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Introduction</span></span> <i class="bi bi-arrow-right-short"></i>
+      <a href="./references.html" class="pagination-link">
+        <span class="nav-page-text">References</span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>

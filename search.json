@@ -2,36 +2,50 @@
   {
     "objectID": "index.html",
     "href": "index.html",
-    "title": "Single-cell ATAC-seq analysis pipeline",
+    "title": "A guide to the single-cell epigenomics analysis",
     "section": "",
-    "text": "Preface\nThis is a Quarto book.\nTo learn more about Quarto books visit https://quarto.org/docs/books."
+    "text": "Preface\nThis book is used to complement the documentation of the SnapATAC2 Python/Rust package."
   },
   {
     "objectID": "intro.html",
     "href": "intro.html",
     "title": "1  Introduction",
     "section": "",
-    "text": "This is a book created from markdown and executable code.\nSee Knuth (1984) for additional discussion of literate programming.\n\n\n\n\nKnuth, Donald E. 1984. “Literate Programming.” Comput. J. 27 (2): 97–111. https://doi.org/10.1093/comjnl/27.2.97."
+    "text": "This is a book created from markdown and executable code."
   },
   {
-    "objectID": "qc.html",
-    "href": "qc.html",
-    "title": "2  Per-cell Quality Control",
-    "section": "",
-    "text": "Strict quality control (QC) of scATAC-seq data is essential to remove the contribution of low-quality cells. The get_qc function calculates and outputs various QC metrics. We typically use two QC metrics below to filter the cells:\n\nThe number of unique nuclear fragments (i.e. not mapping to mitochondrial DNA).\nThe signal-to-background ratio. Low signal-to-background ratio is often attributed to dead or dying cells which have de-chromatinzed DNA which allows for random transposition genome-wide.\n\nThe first metric, unique nuclear fragments, is straightforward - cells with very few usable fragments will not provide enough data to make useful interpretations and should therefore be excluded.\nThe second metric, signal-to-background ratio, is calculated as the TSS enrichment score. Traditional bulk ATAC-seq analysis has used this TSS enrichment score as part of a standard workflow for determination of signal-to-background (for example, the ENCODE project). We and others have found the TSS enrichment to be representative across the majority of cell types tested in both bulk ATAC-seq and scATAC-seq. The idea behind the TSS enrichment score metric is that ATAC-seq data is universally enriched at gene TSS regions compared to other genomic regions, due to large protein complexes that bind to promoters. By looking at per-basepair accessibility centered at these TSS regions, we see a local enrichment relative to flanking regions (1900-2000 bp distal in both directions). The ratio between the peak of this enrichment (centered at the TSS) relative to these flanking regions represents the TSS enrichment score.\nTraditionally, the per-base-pair accessibility is computed for each bulk ATAC-seq sample and then this profile is used to determine the TSS enrichment score. Performing this operation on a per-cell basis in scATAC-seq is relatively slow and computationally expensive. To accurately approximate the TSS enrichment score per single cell, we count the average accessibility within a 50-bp region centered at each single-base TSS position and divide this by the average accessibility of the TSS flanking positions (+/- 1900 – 2000 bp). This approximation was highly correlated (R > 0.99) with the original method and values were extremely close in magnitude.\nThe fragment size distribution. Due to nucleosomal periodicity, we expect to see depletion of fragments that are the length of DNA wrapped around a nucleosome (approximately 147 bp). The third metric, fragment size distribution, is generally less important but always good to manually inspect. Because of the patterned way that DNA wraps around nucleosomes, we expect to see a nucleosomal periodicity in the distribution of fragment sizes in our data. These hills and valleys appear because fragments must span 0, 1, 2, etc. nucleosomes (Tn5 cannot cut DNA that is tightly wrapped around a nucleosome."
+    "objectID": "file_format.html#fragment-interval-format",
+    "href": "file_format.html#fragment-interval-format",
+    "title": "2  Input data format",
+    "section": "2.1 Fragment interval format",
+    "text": "2.1 Fragment interval format\nFragments are created by two separate transposition events, which create the two ends of the observed fragment. Each unique fragment may generate multiple duplicate reads. These duplicate reads are collapsed into a single fragment record. A fragment record must contain exactly five fields:\n\nReference genome chromosome of fragment.\nAdjusted start position of fragment on chromosome.\nAdjusted end position of fragment on chromosome. The end position is exclusive, so represents the position immediately following the fragment interval.\nThe cell barcode of this fragment.\nThe total number of read pairs associated with this fragment. This includes the read pair marked unique and all duplicate read pairs.\n\nDuring data import, a fragment record is converted to two insertions corresponding to the start and end position of the fragment interval."
   },
   {
-    "objectID": "summary.html",
-    "href": "summary.html",
-    "title": "3  Summary",
-    "section": "",
-    "text": "In summary, this book has no content whatsoever."
+    "objectID": "file_format.html#insertion-format",
+    "href": "file_format.html#insertion-format",
+    "title": "2  Input data format",
+    "section": "2.2 Insertion format",
+    "text": "2.2 Insertion format\nInsertion records are used to represent single-end reads in experiments that sequence only one end of the fragments, e.g., Paired-Tag experiments. While fragment records are created by two transposition events, insertion records correspond to a single transposition event.\nEach insertion record must contain six fields:\n\nReference genome chromosome.\nAdjusted start position on chromosome.\nAdjusted end position on chromosome. The end position is exclusive.\nThe cell barcode of this fragment.\nThe total number of reads associated with this insertion.\nThe strandness of the read.\n\nDuring data import, the 5’ end of an insertion record is converted to one insertion count.\nNote: in both cases, the fifth column (duplication count) is not used during reads counting. In other words, we count duplicated reads only once. If you want to count the same record multiple times, you need to duplicate them in the input file."
+  },
+  {
+    "objectID": "dim_reduct.html#spectral-embedding",
+    "href": "dim_reduct.html#spectral-embedding",
+    "title": "3  Dimension reduction",
+    "section": "3.1 Spectral embedding",
+    "text": "3.1 Spectral embedding\nStart with \\(n \\times p\\) cell by feature count matrix \\(M\\), we first compute the \\(n \\times n\\) pairwise similarity matrix \\(S\\) such that \\(S_{ij} = \\delta(M_{i*}, M_{j*})\\), where \\(\\delta: \\mathbb{R}^p \\times \\mathbb{R}^p \\rightarrow \\mathbb{R}\\) is the function defines the similarity between any two cells. Typical choices of \\(\\delta\\) include the jaccard index and the cosine similarity.\nWe then compute the normalized graph Laplacian \\(L = I - D^{-1/2} S D^{-1/2}\\), where \\(I\\) is the identity matrix and \\(D\\) is a diagonal matrix such that \\(D_{ii} = \\sum_k S_{ik}\\).\nThe eigenvectors correspond to the k+1-smallest eigenvalues of \\(L\\) are selected as the lower dimensional embedding."
+  },
+  {
+    "objectID": "dim_reduct.html#nyström-method",
+    "href": "dim_reduct.html#nyström-method",
+    "title": "3  Dimension reduction",
+    "section": "3.2 Nyström method",
+    "text": "3.2 Nyström method\nFor samples with large numbers of cells, computing the full similarity matrix is slow and requires a large amount of memory. To address this limitation and increase the scalability of spectral embedding, we used the Nystrom method to perform a low-rank approximation of the full similarity matrix.\nWe will be focusing on generating an approximation \\(\\tilde{S}\\) of \\(S\\) based on a sample of \\(l ≪ n\\) of its columns.\nSuppose \\(S = \\begin{bmatrix} A & B \\\\ B^T & C \\end{bmatrix}\\) and columns \\(\\begin{bmatrix} A \\\\ B^T \\end{bmatrix}\\) are our samples. We first perform eigendecomposition on \\(A = U \\Lambda U^T\\). The nystrom method approximates the eigenvectors of matrix \\(S\\) by \\(\\tilde{U} = \\begin{bmatrix} U \\\\ B^T U \\Lambda^{-1} \\end{bmatrix}\\).\nWe can then compute \\(\\tilde{S}\\):\n\\[\n\\begin{aligned}\n\\tilde{S} &= \\tilde{U} \\Lambda \\tilde{U}^T \\\\\n          &= \\begin{bmatrix} U \\\\ B^T U \\Lambda^{-1} \\end{bmatrix}\n             \\Lambda\n             \\begin{bmatrix} U^T & \\Lambda^{-1}U^TB \\end{bmatrix} \\\\\n          &= \\begin{bmatrix}\n               U \\Lambda U^T & U \\Lambda \\Lambda^{-1} U^T B \\\\\n               B^T U \\Lambda^{-1} \\Lambda U^T & B^T U \\Lambda^{-1} \\Lambda \\Lambda^{-1} U^T B\n             \\end{bmatrix} \\\\\n          &= \\begin{bmatrix} A & B \\\\ B^T & B^T U \\Lambda^{-1} U^T B \\end{bmatrix}\n\\end{aligned}\n\\]\nIn practice, \\(\\tilde{S}\\) does not need to be computed. Instead, it is used implicitly to estimate the degree normalization vector:\n\\[\n\\tilde{d} = \\tilde{S}\\mathbf{1} = \\begin{bmatrix}A\\mathbf{1} + B\\mathbf{1} \\\\ B^T \\mathbf{1} + B^T A^{-1} B\\mathbf{1}\n\\end{bmatrix}\n\\]\n\n\n\n\nFang, Rongxin, Sebastian Preissl, Yang Li, Xiaomeng Hou, Jacinta Lucero, Xinxin Wang, Amir Motamedi, et al. 2021. “Comprehensive analysis of single cell ATAC-seq data with SnapATAC.” Nature Communications 12 (1): 1337. https://doi.org/10.1038/s41467-021-21583-9."
   },
   {
     "objectID": "references.html",
     "href": "references.html",
     "title": "References",
     "section": "",
-    "text": "Knuth, Donald E. 1984. “Literate Programming.” Comput.\nJ. 27 (2): 97–111. https://doi.org/10.1093/comjnl/27.2.97."
+    "text": "Fang, Rongxin, Sebastian Preissl, Yang Li, Xiaomeng Hou, Jacinta Lucero,\nXinxin Wang, Amir Motamedi, et al. 2021. “Comprehensive analysis of single cell ATAC-seq data with\nSnapATAC.” Nature Communications 12 (1): 1337. https://doi.org/10.1038/s41467-021-21583-9."
   }
 ]

@@ -6,9 +6,8 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="author" content="Kai Zhang">
 
-<title>A guide to the single-cell epigenomics analysis</title>
+<title>A guide to the single-cell epigenomics analysis - 2&nbsp; Input data format</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -31,7 +30,8 @@ ul.task-list li input[type="checkbox"] {
 <script src="site_libs/quarto-search/fuse.min.js"></script>
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
-<link href="./intro.html" rel="next">
+<link href="./dim_reduct.html" rel="next">
+<link href="./intro.html" rel="prev">
 <script src="site_libs/quarto-html/quarto.js"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
 <script src="site_libs/quarto-html/tippy.umd.min.js"></script>
@@ -79,7 +79,7 @@ gtag('config', 'G-3C1W433VY8', { 'anonymize_ip': true});
   <header id="quarto-header" class="headroom fixed-top">
   <nav class="quarto-secondary-nav" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
     <div class="container-fluid d-flex justify-content-between">
-      <h1 class="quarto-secondary-nav-title">A guide to the single-cell epigenomics analysis</h1>
+      <h1 class="quarto-secondary-nav-title"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Input data format</span></h1>
       <button type="button" class="quarto-btn-toggle btn" aria-label="Show secondary navigation">
         <i class="bi bi-chevron-right"></i>
       </button>
@@ -128,7 +128,7 @@ gtag('config', 'G-3C1W433VY8', { 'anonymize_ip': true});
     <ul class="list-unstyled mt-1">
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./index.html" class="sidebar-item-text sidebar-link active">Preface</a>
+  <a href="./index.html" class="sidebar-item-text sidebar-link">Preface</a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -138,7 +138,7 @@ gtag('config', 'G-3C1W433VY8', { 'anonymize_ip': true});
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./file_format.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Input data format</span></a>
+  <a href="./file_format.html" class="sidebar-item-text sidebar-link active"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Input data format</span></a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -160,28 +160,23 @@ gtag('config', 'G-3C1W433VY8', { 'anonymize_ip': true});
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#preface" id="toc-preface" class="nav-link active" data-scroll-target="#preface">Preface</a></li>
+  <li><a href="#fragment-interval-format" id="toc-fragment-interval-format" class="nav-link active" data-scroll-target="#fragment-interval-format"><span class="toc-section-number">2.1</span>  Fragment interval format</a></li>
+  <li><a href="#insertion-format" id="toc-insertion-format" class="nav-link" data-scroll-target="#insertion-format"><span class="toc-section-number">2.2</span>  Insertion format</a></li>
   </ul>
-<div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/kaizhang/epigenomics-analysis/edit/main/index.qmd" class="toc-action">Edit this page</a></p><p><a href="https://github.com/kaizhang/epigenomics-analysis/issues/new" class="toc-action">Report an issue</a></p></div></div></nav>
+<div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/kaizhang/epigenomics-analysis/edit/main/file_format.qmd" class="toc-action">Edit this page</a></p><p><a href="https://github.com/kaizhang/epigenomics-analysis/issues/new" class="toc-action">Report an issue</a></p></div></div></nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title d-none d-lg-block">A guide to the single-cell epigenomics analysis</h1>
+<h1 class="title d-none d-lg-block"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Input data format</span></h1>
 </div>
 
 
 
 <div class="quarto-title-meta">
 
-    <div>
-    <div class="quarto-title-meta-heading">Author</div>
-    <div class="quarto-title-meta-contents">
-             <p>Kai Zhang </p>
-          </div>
-  </div>
     
   
     
@@ -190,9 +185,33 @@ gtag('config', 'G-3C1W433VY8', { 'anonymize_ip': true});
 
 </header>
 
-<section id="preface" class="level1 unnumbered">
-<h1 class="unnumbered">Preface</h1>
-<p>This book is used to complement the documentation of the SnapATAC2 Python/Rust package.</p>
+<p>SnapATAC2 accepts BAM or BED-like tabular file as input. The BED-like tabular file can be used to represent fragments (paired-end sequencing) or insertions (single-end sequencing). BAM files can be converted to BED-like files using <code>snapatac2.pp.make_fragment_file</code>.</p>
+<section id="fragment-interval-format" class="level2" data-number="2.1">
+<h2 data-number="2.1" class="anchored" data-anchor-id="fragment-interval-format"><span class="header-section-number">2.1</span> Fragment interval format</h2>
+<p>Fragments are created by two separate transposition events, which create the two ends of the observed fragment. Each unique fragment may generate multiple duplicate reads. These duplicate reads are collapsed into a single fragment record. <strong>A fragment record must contain exactly five fields</strong>:</p>
+<ol type="1">
+<li>Reference genome chromosome of fragment.</li>
+<li>Adjusted start position of fragment on chromosome.</li>
+<li>Adjusted end position of fragment on chromosome. The end position is exclusive, so represents the position immediately following the fragment interval.</li>
+<li>The cell barcode of this fragment.</li>
+<li>The total number of read pairs associated with this fragment. This includes the read pair marked unique and all duplicate read pairs.</li>
+</ol>
+<p>During data import, a fragment record is converted to two insertions corresponding to the start and end position of the fragment interval.</p>
+</section>
+<section id="insertion-format" class="level2" data-number="2.2">
+<h2 data-number="2.2" class="anchored" data-anchor-id="insertion-format"><span class="header-section-number">2.2</span> Insertion format</h2>
+<p>Insertion records are used to represent single-end reads in experiments that sequence only one end of the fragments, e.g., Paired-Tag experiments. While fragment records are created by two transposition events, insertion records correspond to a single transposition event.</p>
+<p>Each insertion record must contain six fields:</p>
+<ol type="1">
+<li>Reference genome chromosome.</li>
+<li>Adjusted start position on chromosome.</li>
+<li>Adjusted end position on chromosome. The end position is exclusive.</li>
+<li>The cell barcode of this fragment.</li>
+<li>The total number of reads associated with this insertion.</li>
+<li>The strandness of the read.</li>
+</ol>
+<p>During data import, the 5’ end of an insertion record is converted to one insertion count.</p>
+<p>Note: in both cases, the fifth column (duplication count) is not used during reads counting. In other words, we count duplicated reads only once. If you want to count the same record multiple times, you need to duplicate them in the input file.</p>
 
 
 </section>
@@ -333,10 +352,13 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
+      <a href="./intro.html" class="pagination-link">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Introduction</span></span>
+      </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="./intro.html" class="pagination-link">
-        <span class="nav-page-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Introduction</span></span> <i class="bi bi-arrow-right-short"></i>
+      <a href="./dim_reduct.html" class="pagination-link">
+        <span class="nav-page-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Dimension reduction</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>
