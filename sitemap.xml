@@ -2,22 +2,26 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://kzhang.org/Book-scATAC-seq/index.html</loc>
-    <lastmod>2022-01-05T04:22:48.232Z</lastmod>
+    <lastmod>2022-11-17T18:53:22.870Z</lastmod>
   </url>
   <url>
     <loc>https://kzhang.org/Book-scATAC-seq/intro.html</loc>
-    <lastmod>2022-01-05T04:22:48.232Z</lastmod>
+    <lastmod>2022-11-17T18:53:22.870Z</lastmod>
   </url>
   <url>
     <loc>https://kzhang.org/Book-scATAC-seq/qc.html</loc>
-    <lastmod>2022-01-05T04:22:48.232Z</lastmod>
+    <lastmod>2022-11-17T18:53:22.870Z</lastmod>
   </url>
   <url>
     <loc>https://kzhang.org/Book-scATAC-seq/summary.html</loc>
-    <lastmod>2022-01-05T04:22:48.236Z</lastmod>
+    <lastmod>2022-11-17T18:53:22.874Z</lastmod>
   </url>
   <url>
     <loc>https://kzhang.org/Book-scATAC-seq/references.html</loc>
-    <lastmod>2022-01-05T04:22:48.236Z</lastmod>
+    <lastmod>2022-11-17T18:53:22.874Z</lastmod>
+  </url>
+  <url>
+    <loc>https://kzhang.org/Book-scATAC-seq/Single-cell-ATAC-seq-analysis-pipeline.pdf</loc>
+    <lastmod>2022-11-17T18:53:22.754Z</lastmod>
   </url>
 </urlset>
