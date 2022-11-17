@@ -2,20 +2,19 @@ project:
   type: book
 
 book:
-  title: "Single-cell ATAC-seq analysis pipeline"
+  title: "A guide to the single-cell epigenomics analysis"
   author: "Kai Zhang"
-  cover-image: images/cover.png
   google-analytics: "G-4T647M9GLJ"
-  site-url: https://kzhang.org/Book-scATAC-seq/
-  repo-url: https://github.com/kaizhang/Book-scATAC-seq/
+  site-url: https://kzhang.org/epigenomcis-analysis/
+  repo-url: https://github.com/kaizhang/epigenomics-analysis/
   repo-branch: main
   repo-actions: [edit, issue]
   sharing: [twitter, facebook, linkedin]
   chapters:
     - index.qmd
     - intro.qmd
-    - qc.qmd
-    - summary.qmd
+    - file_format.qmd
+    - dim_reduct.qmd
     - references.qmd
 
 bibliography: references.bib
@@ -25,3 +24,5 @@ format:
     theme: cosmo
   pdf:
     documentclass: scrreport
+  epub:
+    cover-image: images/cover.png
