@@ -2,30 +2,34 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://kzhang.org/epigenomcis-analysis/index.html</loc>
-    <lastmod>2022-11-17T23:01:45.993Z</lastmod>
+    <lastmod>2022-11-19T02:08:06.975Z</lastmod>
   </url>
   <url>
     <loc>https://kzhang.org/epigenomcis-analysis/intro.html</loc>
-    <lastmod>2022-11-17T23:01:45.993Z</lastmod>
+    <lastmod>2022-11-19T02:08:06.979Z</lastmod>
+  </url>
+  <url>
+    <loc>https://kzhang.org/epigenomcis-analysis/anndata.html</loc>
+    <lastmod>2022-11-19T02:08:06.979Z</lastmod>
   </url>
   <url>
     <loc>https://kzhang.org/epigenomcis-analysis/file_format.html</loc>
-    <lastmod>2022-11-17T23:01:45.993Z</lastmod>
+    <lastmod>2022-11-19T02:08:06.979Z</lastmod>
   </url>
   <url>
     <loc>https://kzhang.org/epigenomcis-analysis/dim_reduct.html</loc>
-    <lastmod>2022-11-17T23:01:45.993Z</lastmod>
+    <lastmod>2022-11-19T02:08:06.983Z</lastmod>
   </url>
   <url>
     <loc>https://kzhang.org/epigenomcis-analysis/references.html</loc>
-    <lastmod>2022-11-17T23:01:45.993Z</lastmod>
+    <lastmod>2022-11-19T02:08:06.983Z</lastmod>
   </url>
   <url>
     <loc>https://kzhang.org/epigenomcis-analysis/A-guide-to-the-single-cell-epigenomics-analysis.pdf</loc>
-    <lastmod>2022-11-17T23:01:45.517Z</lastmod>
+    <lastmod>2022-11-19T02:08:05.183Z</lastmod>
   </url>
   <url>
     <loc>https://kzhang.org/epigenomcis-analysis/A-guide-to-the-single-cell-epigenomics-analysis.epub</loc>
-    <lastmod>2022-11-17T23:01:45.865Z</lastmod>
+    <lastmod>2022-11-19T02:08:06.807Z</lastmod>
   </url>
 </urlset>
