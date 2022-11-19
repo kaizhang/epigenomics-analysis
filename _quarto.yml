@@ -4,25 +4,40 @@ project:
 book:
   title: "A guide to the single-cell epigenomics analysis"
   author: "Kai Zhang"
-  google-analytics: "G-3C1W433VY8"
+
   site-url: https://kzhang.org/epigenomcis-analysis/
   repo-url: https://github.com/kaizhang/epigenomics-analysis/
   repo-branch: main
   repo-actions: [edit, issue]
+
+  google-analytics: "G-3C1W433VY8"
+
+  downloads: [pdf, epub]
   sharing: [twitter, facebook, linkedin]
+
+  sidebar:
+    style: docked
+    background: light
+
   chapters:
     - index.qmd
     - intro.qmd
+    - anndata.qmd
     - file_format.qmd
     - dim_reduct.qmd
     - references.qmd
+
+comments:
+  hypothesis: true
 
 bibliography: references.bib
 
 format:
   html:
-    theme: cosmo
+    theme:
+      light: sandstone
+      dark: cyborg
   pdf:
-    documentclass: scrreport
+    documentclass: scrbook
   epub:
     cover-image: images/cover.png

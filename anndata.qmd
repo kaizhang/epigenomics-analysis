@@ -1,0 +1,232 @@
+---
+execute:
+  freeze: auto
+---
+
+AnnData -- Annotated Data
+=========================
+
+## Introduction
+
+AnnData is both a data structure and an on-disk file specification that facilitates the sharing of labeled data matrices.
+
+The Python [anndata](https://anndata.readthedocs.io/en/latest/) package supports both in-memory and on-disk representation of AnnData object.
+For detailed descriptions about the AnnData format, please read `anndata`'s
+[documentation](https://anndata.readthedocs.io/en/latest/).
+
+Despite being an excellent package, the `anndata` package falls shall of its support for the on-disk representation or backed mode of AnnData object.
+When opened in the backed mode, the in-memory snapshot and on-disk data of AnnData are not in sync with each other, causing inconsistent and unexpected behaviors. 
+For example in the backed mode, `anndata` only supports updates to the `X` slot in the AnnData object, which means any changes to other slots like `obs` will not be written to disk.
+This make the backed mode very cumbersome to use and often lead to unexpected outcomes.
+Also, as it still reads all other componenets except `X` into memory, it uses
+a lot of memory for large datasets.
+
+To address these limitations, SnapATAC2 implements its own **out-of-core** AnnData object with
+the following key features:
+
+- AnnData is fully backed by the underlying hdf5 file. Any operations on the AnnData object
+  will be reflected on the hdf5 file.
+- All elements are lazily loaded. No matter how large is the file, opening it
+  consume almost zero memory. Matrix data can be accessed and processed by chunks,
+  which keeps the memory usage to the minimum.
+- In-memory cache can be turned on to speed up the repetitive access of elements.
+- Featuring an AnnDataSet object to lazily concatenate multiple AnnData objects.
+
+## A tutorial on using backed AnnData objects
+
+In this section, we will learn the basics about SnapATAC2's AnnData implementation.
+
+### Reading/opening a h5ad file.
+
+SnapATAC2 can open `h5ad` files in either in-memory mode or backed mode.
+By default, `snapatac2.read` open a `h5ad` file in backed mode.
+
+```{python}
+import snapatac2 as snap
+adata = snap.read(snap.datasets.pbmc5k(type='h5ad'))
+adata
+```
+
+You can turn the backed mode off using `backed=False`, which will use the Python 
+`anndata` package to read the file and create an in-memory AnnData object.
+
+```{python}
+import snapatac2 as snap
+adata = snap.read(snap.datasets.pbmc5k(type='h5ad'), backed=False)
+adata
+```
+
+### Closing a backed AnnData object
+
+The backed AnnData object in SnapATAC2 does not need to be saved as it is always in
+sync with the data on disk.
+However, if you have opened the `h5ad` file in write mode, it is important to remember
+to close the file using the `AnnData.close` method.
+Otherwise, the underlying hdf5 file might be corrupted.
+
+```{python}
+adata = snap.read(snap.datasets.pbmc5k(type='h5ad'))
+adata.close()
+adata
+```
+
+### Creating a backed AnnData object
+
+You can use the `AnnData` constructor to create a new AnnData object.
+
+```{python}
+adata = snap.AnnData(filename='adata.h5ad')
+adata
+```
+
+You can then modify slots in the AnnData object.
+
+```{python}
+import numpy as np
+adata.X = np.ones((3, 4))
+adata.obs_names = ["1", "2", "3"]
+adata.var_names = ["a", "b", "c", "d"]
+adata.obsm['matrix'] = np.ones((3, 10))
+adata.varm['another_matrix'] = np.ones((4, 10))
+adata
+```
+
+The matrices are now saved on the backing hdf5 file and will be cleared from the memory.
+
+### Accessing elements in a backed AnnData object
+
+Slots in backed AnnData object, *e.g.,* `AnnData.X`, `AnnData.obs`, store references to the actual data.
+Accessing those slots does not automatically perform dereferencing or load the data into memory. Instead, a lazy element will be returned, as demonstrated in the example below:
+
+```{python}
+adata.X
+```
+
+However, asscessing the slots by keys will automatically read the data:
+
+```{python}
+adata.obsm['matrix']
+```
+
+To retreive the lazy element from `obsm`, you can use:
+
+```{python}
+adata.obsm.el('matrix')
+```
+
+Several useful methods haven been implemented for lazy elements. For example,
+you can use the slicing operator to read the full data or a part of the data:
+
+```{python}
+adata.X[:]
+```
+
+```{python}
+adata.X[:2, :2]
+```
+
+You can also iterate over the chunks of the matrix using the `chunked` method:
+
+```{python}
+for chunk, fr, to in adata.obsm.el('matrix').chunked(chunk_size=2):
+    print("from row {} to {}: {}".format(fr, to - 1, chunk))
+```
+
+By default AnnData will read from the disk each time you request the data.
+This will incur a lot of IO overheads if you do this repetitively. 
+
+```{python}
+%%time
+for _ in range(1000):
+    adata.obsm['matrix']
+```
+
+One solution to this is to turn on the cache for the element you want to repetitively read from.
+
+```{python}
+%%time
+adata.obsm.el('matrix').enable_cache()
+for _ in range(1000):
+    adata.obsm['matrix']
+```
+
+The data will be cached the first time you request it and the subsequent calls will make use of the cached data.
+
+### Subsetting the AnnData
+
+The backed AnnData object does not have "views".
+Instead, you need to use the `AnnData.subset` method to create a new AnnData object.
+
+```{python}
+adata_subset = adata.subset([0, 1], [0, 1], out="subset.h5ad")
+adata_subset
+```
+
+You could also do this inplace without the `out` parameter:
+
+```{python}
+adata_subset.subset([0])
+adata_subset
+```
+
+### Convert to in-memory representation
+
+Finally, you can convert a backed AnnData to `anndata`'s in-memory AnnData object using:
+
+```{python}
+adata.to_memory()
+```
+
+## Combining multiple AnnData objects into a AnnDataSet object
+
+Oftentimes you want to combine and deal with multiple h5ad files simultaniously.
+In this section you will learn how to do this efficiently.
+
+First, let us create a bunch of AnnData objects.
+
+```{python}
+def create_anndata(index: int):
+    adata = snap.AnnData(
+        X=np.ones((4, 7))*index,
+        filename=str(index) + ".h5ad",
+    )
+    adata.var_names = [str(i) for i in range(7)]
+    adata.obs_names = [str(i) for i in range(4)]
+    adata.obsm['matrix'] = np.random.rand(4,50)
+    return adata
+list_of_anndata = [(str(i), create_anndata(i)) for i in range(10)]
+```
+
+We can then use the `AnnDataSet` constructor to horizontally concatenate all AnnData objects.
+
+```{python}
+dataset = snap.AnnDataSet(
+    adatas=list_of_anndata,
+    filename="dataset.h5ads",
+    add_key="id",
+)
+dataset
+```
+
+AnnDataSet is just a special form of AnnData objects.
+It inherits most of the methods from AnnData.
+It carries its own annotations, such as `obs`, `var`, `obsm`, *etc*.
+Besides, it grants you the access to component AnnData objects as well, as shown in the example below:
+
+```{python}
+dataset.adatas.obsm['matrix']
+```
+
+### Subsetting an AnnDataSet object
+
+AnnDataSet can be subsetted in a way similar to AnnData objects.
+But there is one caveat: subsetting an AnnDataSet will not rearrange the rows across
+component AnnData objects.
+
+### Converting AnnDataSet to AnnData
+
+An in-memory AnnData can be made from AnnDataSet using:
+
+```{python}
+dataset.to_adata()
+```
