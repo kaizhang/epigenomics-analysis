@@ -1,2 +1,5 @@
-/.quarto/
+.quarto
 _book
+
+/.quarto/
+*.h5ad

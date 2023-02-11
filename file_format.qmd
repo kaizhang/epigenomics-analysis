@@ -1,6 +1,14 @@
 Input data format
 =================
 
+## What is ATAC-seq?
+
+ATAC-Seq stands for Assay for Transposase-Accessible Chromatin with high-throughput sequencing.
+
+## Single-Cell ATAC-Seq (scATAC-Seq)
+
+A major limitation of all methods that use populations of millions of cells is that the data they produce is always an average of what’s happening in each of the individual cells in the population, which averages out the cell-to-cell variability that might be present in the sample and therefore might eliminate the ability to make observations about interesting phenomena in sub-populations. This variability is often an important feature of biology when it comes to things like tumor heterogeneity or developmental processes.
+
 SnapATAC2 accepts BAM or BED-like tabular file as input. The BED-like tabular file can be used to represent fragments (paired-end sequencing) or insertions (single-end sequencing). BAM files can be converted to BED-like
 files using `snapatac2.pp.make_fragment_file`.
 

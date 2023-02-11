@@ -14,7 +14,7 @@ The Python [anndata](https://anndata.readthedocs.io/en/latest/) package supports
 For detailed descriptions about the AnnData format, please read `anndata`'s
 [documentation](https://anndata.readthedocs.io/en/latest/).
 
-Despite being an excellent package, the `anndata` package falls shall of its support for the on-disk representation or backed mode of AnnData object.
+Despite being an excellent package, the `anndata` package falls short of its support for the on-disk representation or backed mode of AnnData object.
 When opened in the backed mode, the in-memory snapshot and on-disk data of AnnData are not in sync with each other, causing inconsistent and unexpected behaviors. 
 For example in the backed mode, `anndata` only supports updates to the `X` slot in the AnnData object, which means any changes to other slots like `obs` will not be written to disk.
 This make the backed mode very cumbersome to use and often lead to unexpected outcomes.
@@ -52,7 +52,7 @@ You can turn the backed mode off using `backed=False`, which will use the Python
 
 ```{python}
 import snapatac2 as snap
-adata = snap.read(snap.datasets.pbmc5k(type='h5ad'), backed=False)
+adata = snap.read(snap.datasets.pbmc5k(type='h5ad'), backed=None)
 adata
 ```
 

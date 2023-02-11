@@ -14,47 +14,104 @@ similarity between each pair of cells in the data.
 This method was first proposed in [@Fang.Ren.2021], the version 1 of SnapATAC, and was called "diffusion map".
 In SnapATAC2, we reformulate this approach as spectral embedding, *a.k.a.*, Laplacian eigenmaps.
 
+Preprocessing
+-------------
+
+We preprocess the matrix by the Inverse Document Frequency (IDF) weighting.
+In the context of scATAC-seq, the IDF is defined as:
+
 Spectral embedding
 ------------------
 
-Start with $n \times p$ cell by feature count matrix $M$, we first compute the
-$n \times n$ pairwise similarity matrix $S$ such that $S_{ij} = \delta(M_{i*}, M_{j*})$,
+Assuming the $n \times p$ cell by feature count matrix $C$ has been preprocessed,
+we first compute the $n \times n$ pairwise similarity matrix $W$ such that $W_{ij} = \delta(C_{i*}, C_{j*})$,
 where $\delta: \mathbb{R}^p \times \mathbb{R}^p \rightarrow \mathbb{R}$ is the
 function defines the similarity between any two cells. Typical choices of $\delta$
 include the jaccard index and the cosine similarity.
 
-We then compute the normalized graph Laplacian
-$L = I - D^{-1/2} S D^{-1/2}$,
-where $I$ is the identity matrix and $D$ is a diagonal matrix such that
-$D_{ii} = \sum_k S_{ik}$.
+We then compute the symmetric normalized graph Laplacian
+$L_{sym} = I - D^{-1/2} W D^{-1/2}$,
+where $I$ is the identity matrix and $D = diag(W1)$.
 
-The eigenvectors correspond to the k+1-smallest eigenvalues of $L$ are selected as
-the lower dimensional embedding.
+The bottom eigenvectors of $L_{sym}$ are selected as the lower dimensional embedding.
+The corresponding eigenvectors can be computed alternatively as the top eigenvectors of
+the similarly normalized weight matrix:
+
+$\tilde{W} = D^{-1/2} W D^{-1/2}$,
+
+Matrix-free spectral embedding with cosine similarity
+-----------------------------------------------------
+
+When using the cosine similarity, we can avoid computing the full similarity matrix.
+
+The cosine similarity between two vectors A and B is defined as:
+
+$$S_c(A, B) = \frac{A \cdot B}{||A|| ||B||}$$
+
+First we rescale the non-negative count matrix $C$ to $X$ such that the rows of $X$ have unit $L_2$ norm.
+
+The cosine similarity matrix is then defined as,
+
+$$W = XX^T - I$$
+
+Note that we set the diagonal of $W$ to zeros by subtracting the identity matrix.
+This is necessary because our benchmark result show that it generally improves the quality of the embedding.
+
+The degree matrix can be computed as,
+
+$$D = diag((X X^T - I) \mathbf{1}) = diag(X(X^T \mathbf{1}) - \mathbf{1})$$
+
+and,
+
+$$\tilde{W} = D^{-1/2} XX^T D^{-1/2} - D^{-1} = \tilde{X}\tilde{X}^T - D^{-1}$$
+
+where $\tilde{X} = D^{-1/2} X$.
+
+Note that $\tilde{X}$ has the same size as $X$,
+and if X is sparse, $\tilde{X}$ preserves the sparsity pattern of $X$.
+
+We remark that this problem would be easier if we ignore the $D^{-1}$ term,
+because the eigenvectors of $\tilde{X}\tilde{X}^T$ can be computed from the Singular Vector Decomposition (SVD) of $\tilde{X}$.
+With the presence of the $D^{-1}$ term, we resort to the Lanczos algorithm to compute the top eigenvectors of $\tilde{W}$ without ever computing $\tilde{W}$.
+Each iteration in the Lanczos algorithm requires computing the matrix-vector product between $\tilde{W}$ and $\mathbf{v}$,
+
+$$\tilde{W} \mathbf{v} = \tilde{X} (\tilde{X}^T \mathbf{v}) - D^{-1} \mathbf{v}$$
+
+Using the specific order of operations shown in the formula above,
+we can reduce the computational cost of the matrix-vector product to $2z + n$,
+where $n$ is the number of rows in $X$ and $z$ is the number of non-zero elements in $X$.
+
+As a comparision, performing this operation on the full similarity matrix will need $n^2$ computations.
+Note that $z ≪ n^2$ for most scATAC-seq data.
+Computing the full similarity matrix additionally requires $n^3$ computations using the naive algorithm,
+which is prohibitively expensive for large datasets.
+Therefore, the matrix-free method is much faster and more memory efficient.
 
 Nyström method
 --------------
 
-For samples with large numbers of cells, computing the full similarity matrix is
-slow and requires a large amount of memory.
-To address this limitation and increase the scalability of spectral embedding,
-we used the Nystrom method to perform a low-rank approximation of the full
+The matrix-free method described above is very fast and memory efficient.
+However, for massive datasets with hundreds of millions of cells, storing the cell by peak count matrix
+$C$ may already be a challenge.
+In this section, we describe an on-line embedding method that can applied to virtually arbitrary large datasets.
+The key idea here is to use the Nystrom method to perform a low-rank approximation of the full
 similarity matrix.
 
-We will be focusing on generating an approximation $\tilde{S}$ of $S$ based on
+We will be focusing on generating an approximation $\tilde{W}$ of $W$ based on
 a sample of $l ≪ n$ of its columns.
 
 Suppose
-$S = \begin{bmatrix} A & B \\ B^T & C \end{bmatrix}$
+$W = \begin{bmatrix} A & B \\ B^T & C \end{bmatrix}$
 and columns $\begin{bmatrix} A \\ B^T \end{bmatrix}$ are our samples.
 We first perform eigendecomposition on $A = U \Lambda U^T$.
-The nystrom method approximates the eigenvectors of matrix $S$ by
+The nystrom method approximates the eigenvectors of matrix $W$ by
 $\tilde{U} = \begin{bmatrix} U \\ B^T U \Lambda^{-1} \end{bmatrix}$.
 
-We can then compute $\tilde{S}$:
+We can then compute $\tilde{W}$:
 
 $$
 \begin{aligned}
-\tilde{S} &= \tilde{U} \Lambda \tilde{U}^T \\
+\tilde{W} &= \tilde{U} \Lambda \tilde{U}^T \\
           &= \begin{bmatrix} U \\ B^T U \Lambda^{-1} \end{bmatrix}
              \Lambda
              \begin{bmatrix} U^T & \Lambda^{-1}U^TB \end{bmatrix} \\
@@ -66,10 +123,13 @@ $$
 \end{aligned}
 $$
 
-In practice, $\tilde{S}$ does not need to be computed.
+In practice, $\tilde{W}$ does not need to be computed.
 Instead, it is used implicitly to estimate the degree normalization vector:
 
 $$
-\tilde{d} = \tilde{S}\mathbf{1} = \begin{bmatrix}A\mathbf{1} + B\mathbf{1} \\ B^T \mathbf{1} + B^T A^{-1} B\mathbf{1}
+\tilde{d} = \tilde{W}\mathbf{1} = \begin{bmatrix}A\mathbf{1} + B\mathbf{1} \\ B^T \mathbf{1} + B^T A^{-1} B\mathbf{1}
 \end{bmatrix}
 $$
+
+This approach requires computing the inverse of $A$, which is expensive when $A$ is large.
+Here we use an algorithm reported in XXX to approximate the degree matrix.
