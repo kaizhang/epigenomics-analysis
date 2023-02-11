@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.2.269">
+<meta name="generator" content="quarto-1.2.335">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -215,7 +215,7 @@ gtag('config', 'G-3C1W433VY8', { 'anonymize_ip': true});
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./intro.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Introduction</span></a>
+  <a href="./intro.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">What is epigenomics?</span></a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -289,7 +289,7 @@ gtag('config', 'G-3C1W433VY8', { 'anonymize_ip': true});
 <h2 data-number="2.1" class="anchored" data-anchor-id="introduction"><span class="header-section-number">2.1</span> Introduction</h2>
 <p>AnnData is both a data structure and an on-disk file specification that facilitates the sharing of labeled data matrices.</p>
 <p>The Python <a href="https://anndata.readthedocs.io/en/latest/">anndata</a> package supports both in-memory and on-disk representation of AnnData object. For detailed descriptions about the AnnData format, please read <code>anndata</code>’s <a href="https://anndata.readthedocs.io/en/latest/">documentation</a>.</p>
-<p>Despite being an excellent package, the <code>anndata</code> package falls shall of its support for the on-disk representation or backed mode of AnnData object. When opened in the backed mode, the in-memory snapshot and on-disk data of AnnData are not in sync with each other, causing inconsistent and unexpected behaviors. For example in the backed mode, <code>anndata</code> only supports updates to the <code>X</code> slot in the AnnData object, which means any changes to other slots like <code>obs</code> will not be written to disk. This make the backed mode very cumbersome to use and often lead to unexpected outcomes. Also, as it still reads all other componenets except <code>X</code> into memory, it uses a lot of memory for large datasets.</p>
+<p>Despite being an excellent package, the <code>anndata</code> package falls short of its support for the on-disk representation or backed mode of AnnData object. When opened in the backed mode, the in-memory snapshot and on-disk data of AnnData are not in sync with each other, causing inconsistent and unexpected behaviors. For example in the backed mode, <code>anndata</code> only supports updates to the <code>X</code> slot in the AnnData object, which means any changes to other slots like <code>obs</code> will not be written to disk. This make the backed mode very cumbersome to use and often lead to unexpected outcomes. Also, as it still reads all other componenets except <code>X</code> into memory, it uses a lot of memory for large datasets.</p>
 <p>To address these limitations, SnapATAC2 implements its own <strong>out-of-core</strong> AnnData object with the following key features:</p>
 <ul>
 <li>AnnData is fully backed by the underlying hdf5 file. Any operations on the AnnData object will be reflected on the hdf5 file.</li>
@@ -312,24 +312,24 @@ gtag('config', 'G-3C1W433VY8', { 'anonymize_ip': true});
 <pre><code>AnnData object with n_obs x n_vars = 4363 x 6176550 backed at '/home/kaizhang/.cache/snapatac2/atac_pbmc_5k.h5ad'
     obs: 'tsse', 'n_fragment', 'frac_dup', 'frac_mito', 'doublet_score', 'is_doublet', 'leiden'
     var: 'selected'
-    uns: 'scrublet_sim_doublet_score', 'scrublet_threshold', 'spectral_eigenvalue', 'reference_sequences', 'peaks'
-    obsm: 'X_spectral', 'X_umap', 'insertion'
+    uns: 'scrublet_threshold', 'reference_sequences', 'scrublet_sim_doublet_score', 'spectral_eigenvalue'
+    obsm: 'X_umap', 'X_spectral', 'insertion'
     obsp: 'distances'</code></pre>
 </div>
 </div>
 <p>You can turn the backed mode off using <code>backed=False</code>, which will use the Python <code>anndata</code> package to read the file and create an in-memory AnnData object.</p>
 <div class="cell" data-execution_count="2">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> snapatac2 <span class="im">as</span> snap</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>adata <span class="op">=</span> snap.read(snap.datasets.pbmc5k(<span class="bu">type</span><span class="op">=</span><span class="st">'h5ad'</span>), backed<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>adata <span class="op">=</span> snap.read(snap.datasets.pbmc5k(<span class="bu">type</span><span class="op">=</span><span class="st">'h5ad'</span>), backed<span class="op">=</span><span class="va">None</span>)</span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>adata</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
-<pre><code>Updating file 'atac_pbmc_5k.h5ad' from 'http://renlab.sdsc.edu/kai/public_datasets/single_cell_atac/atac_pbmc_5k.h5ad' to '/home/kaizhang/.cache/snapatac2'.</code></pre>
+<pre><code>Updating file 'atac_pbmc_5k.h5ad' from 'https://data.mendeley.com/api/datasets/dr2z4jbcx3/draft/files/d90adfd1-b4b8-4dcd-8704-9ab19f104116?a=758c37e5-4832-4c91-af89-9a1a83a051b3' to '/home/kaizhang/.cache/snapatac2'.</code></pre>
 </div>
 <div class="cell-output cell-output-display" data-execution_count="2">
 <pre><code>AnnData object with n_obs × n_vars = 4363 × 6176550
     obs: 'tsse', 'n_fragment', 'frac_dup', 'frac_mito', 'doublet_score', 'is_doublet', 'leiden'
     var: 'selected'
-    uns: 'peaks', 'reference_sequences', 'scrublet_sim_doublet_score', 'scrublet_threshold', 'spectral_eigenvalue'
+    uns: 'reference_sequences', 'scrublet_sim_doublet_score', 'scrublet_threshold', 'spectral_eigenvalue'
     obsm: 'X_spectral', 'X_umap', 'insertion'
     obsp: 'distances'</code></pre>
 </div>
@@ -380,7 +380,7 @@ gtag('config', 'G-3C1W433VY8', { 'anonymize_ip': true});
 <div class="cell" data-execution_count="6">
 <div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>adata.X</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="6">
-<pre><code>3 x 4 Array(Float(U8)) element, cache_enabled: no, cached: no</code></pre>
+<pre><code>Array(f64) element, cache_enabled: no, cached: no</code></pre>
 </div>
 </div>
 <p>However, asscessing the slots by keys will automatically read the data:</p>
@@ -396,7 +396,7 @@ gtag('config', 'G-3C1W433VY8', { 'anonymize_ip': true});
 <div class="cell" data-execution_count="8">
 <div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>adata.obsm.el(<span class="st">'matrix'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="8">
-<pre><code>3 x 10 Array(Float(U8)) element, cache_enabled: no, cached: no</code></pre>
+<pre><code>Array(f64) element, cache_enabled: no, cached: no</code></pre>
 </div>
 </div>
 <p>Several useful methods haven been implemented for lazy elements. For example, you can use the slicing operator to read the full data or a part of the data:</p>
@@ -431,8 +431,8 @@ from row 2 to 2: [[1. 1. 1. 1. 1. 1. 1. 1. 1. 1.]]</code></pre>
 <span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> _ <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">1000</span>):</span>
 <span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>    adata.obsm[<span class="st">'matrix'</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>CPU times: user 18.4 ms, sys: 279 µs, total: 18.7 ms
-Wall time: 18.6 ms</code></pre>
+<pre><code>CPU times: user 69.3 ms, sys: 1.78 ms, total: 71.1 ms
+Wall time: 70.9 ms</code></pre>
 </div>
 </div>
 <p>One solution to this is to turn on the cache for the element you want to repetitively read from.</p>
@@ -442,8 +442,8 @@ Wall time: 18.6 ms</code></pre>
 <span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> _ <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">1000</span>):</span>
 <span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a>    adata.obsm[<span class="st">'matrix'</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>CPU times: user 801 µs, sys: 0 ns, total: 801 µs
-Wall time: 809 µs</code></pre>
+<pre><code>CPU times: user 1.94 ms, sys: 3 µs, total: 1.95 ms
+Wall time: 1.95 ms</code></pre>
 </div>
 </div>
 <p>The data will be cached the first time you request it and the subsequent calls will make use of the cached data.</p>
@@ -519,19 +519,19 @@ contains 10 AnnData objects with keys: '0', '1', '2', '3', '4', '5', '6', '7', '
 <div class="cell" data-execution_count="19">
 <div class="sourceCode cell-code" id="cb37"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a>dataset.adatas.obsm[<span class="st">'matrix'</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="19">
-<pre><code>array([[0.645444  , 0.51504421, 0.72883674, ..., 0.07300066, 0.98447187,
-        0.70236389],
-       [0.07390566, 0.29147274, 0.7096648 , ..., 0.40711815, 0.08359172,
-        0.29094699],
-       [0.34940684, 0.74439852, 0.13199907, ..., 0.39263826, 0.42370225,
-        0.34984159],
+<pre><code>array([[0.58093577, 0.26644723, 0.4864984 , ..., 0.71743106, 0.9752404 ,
+        0.14249661],
+       [0.84127877, 0.70899659, 0.70174468, ..., 0.55876489, 0.71954284,
+        0.07213879],
+       [0.59091501, 0.69258951, 0.49688508, ..., 0.67908653, 0.62798061,
+        0.79639072],
        ...,
-       [0.92020714, 0.74375838, 0.59506475, ..., 0.04782973, 0.41858974,
-        0.44948326],
-       [0.41591666, 0.63638591, 0.04625217, ..., 0.34052614, 0.77180976,
-        0.98088965],
-       [0.36762871, 0.81782607, 0.89817895, ..., 0.22523039, 0.01643454,
-        0.5769035 ]])</code></pre>
+       [0.34293689, 0.60989453, 0.24111227, ..., 0.21526474, 0.0989522 ,
+        0.57523261],
+       [0.56398127, 0.2169606 , 0.998914  , ..., 0.02527175, 0.31128978,
+        0.37318406],
+       [0.11068251, 0.28360159, 0.51183271, ..., 0.40982264, 0.03265828,
+        0.90912685]])</code></pre>
 </div>
 </div>
 <section id="subsetting-an-anndataset-object" class="level3" data-number="2.3.1">
@@ -806,7 +806,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
       <a href="./intro.html" class="pagination-link">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Introduction</span></span>
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">What is epigenomics?</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">

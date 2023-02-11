@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.2.269">
+<meta name="generator" content="quarto-1.2.335">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -152,7 +152,7 @@ gtag('config', 'G-3C1W433VY8', { 'anonymize_ip': true});
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./intro.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Introduction</span></a>
+  <a href="./intro.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">What is epigenomics?</span></a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -184,8 +184,10 @@ gtag('config', 'G-3C1W433VY8', { 'anonymize_ip': true});
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#fragment-interval-format" id="toc-fragment-interval-format" class="nav-link active" data-scroll-target="#fragment-interval-format"><span class="toc-section-number">3.1</span>  Fragment interval format</a></li>
-  <li><a href="#insertion-format" id="toc-insertion-format" class="nav-link" data-scroll-target="#insertion-format"><span class="toc-section-number">3.2</span>  Insertion format</a></li>
+  <li><a href="#what-is-atac-seq" id="toc-what-is-atac-seq" class="nav-link active" data-scroll-target="#what-is-atac-seq"><span class="toc-section-number">3.1</span>  What is ATAC-seq?</a></li>
+  <li><a href="#single-cell-atac-seq-scatac-seq" id="toc-single-cell-atac-seq-scatac-seq" class="nav-link" data-scroll-target="#single-cell-atac-seq-scatac-seq"><span class="toc-section-number">3.2</span>  Single-Cell ATAC-Seq (scATAC-Seq)</a></li>
+  <li><a href="#fragment-interval-format" id="toc-fragment-interval-format" class="nav-link" data-scroll-target="#fragment-interval-format"><span class="toc-section-number">3.3</span>  Fragment interval format</a></li>
+  <li><a href="#insertion-format" id="toc-insertion-format" class="nav-link" data-scroll-target="#insertion-format"><span class="toc-section-number">3.4</span>  Insertion format</a></li>
   </ul>
 <div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/kaizhang/epigenomics-analysis/edit/main/file_format.qmd" class="toc-action">Edit this page</a></p><p><a href="https://github.com/kaizhang/epigenomics-analysis/issues/new" class="toc-action">Report an issue</a></p></div></div></nav>
     </div>
@@ -209,9 +211,17 @@ gtag('config', 'G-3C1W433VY8', { 'anonymize_ip': true});
 
 </header>
 
+<section id="what-is-atac-seq" class="level2" data-number="3.1">
+<h2 data-number="3.1" class="anchored" data-anchor-id="what-is-atac-seq"><span class="header-section-number">3.1</span> What is ATAC-seq?</h2>
+<p>ATAC-Seq stands for Assay for Transposase-Accessible Chromatin with high-throughput sequencing.</p>
+</section>
+<section id="single-cell-atac-seq-scatac-seq" class="level2" data-number="3.2">
+<h2 data-number="3.2" class="anchored" data-anchor-id="single-cell-atac-seq-scatac-seq"><span class="header-section-number">3.2</span> Single-Cell ATAC-Seq (scATAC-Seq)</h2>
+<p>A major limitation of all methods that use populations of millions of cells is that the data they produce is always an average of what’s happening in each of the individual cells in the population, which averages out the cell-to-cell variability that might be present in the sample and therefore might eliminate the ability to make observations about interesting phenomena in sub-populations. This variability is often an important feature of biology when it comes to things like tumor heterogeneity or developmental processes.</p>
 <p>SnapATAC2 accepts BAM or BED-like tabular file as input. The BED-like tabular file can be used to represent fragments (paired-end sequencing) or insertions (single-end sequencing). BAM files can be converted to BED-like files using <code>snapatac2.pp.make_fragment_file</code>.</p>
-<section id="fragment-interval-format" class="level2" data-number="3.1">
-<h2 data-number="3.1" class="anchored" data-anchor-id="fragment-interval-format"><span class="header-section-number">3.1</span> Fragment interval format</h2>
+</section>
+<section id="fragment-interval-format" class="level2" data-number="3.3">
+<h2 data-number="3.3" class="anchored" data-anchor-id="fragment-interval-format"><span class="header-section-number">3.3</span> Fragment interval format</h2>
 <p>Fragments are created by two separate transposition events, which create the two ends of the observed fragment. Each unique fragment may generate multiple duplicate reads. These duplicate reads are collapsed into a single fragment record. <strong>A fragment record must contain exactly five fields</strong>:</p>
 <ol type="1">
 <li>Reference genome chromosome of fragment.</li>
@@ -222,8 +232,8 @@ gtag('config', 'G-3C1W433VY8', { 'anonymize_ip': true});
 </ol>
 <p>During data import, a fragment record is converted to two insertions corresponding to the start and end position of the fragment interval.</p>
 </section>
-<section id="insertion-format" class="level2" data-number="3.2">
-<h2 data-number="3.2" class="anchored" data-anchor-id="insertion-format"><span class="header-section-number">3.2</span> Insertion format</h2>
+<section id="insertion-format" class="level2" data-number="3.4">
+<h2 data-number="3.4" class="anchored" data-anchor-id="insertion-format"><span class="header-section-number">3.4</span> Insertion format</h2>
 <p>Insertion records are used to represent single-end reads in experiments that sequence only one end of the fragments, e.g., Paired-Tag experiments. While fragment records are created by two transposition events, insertion records correspond to a single transposition event.</p>
 <p>Each insertion record must contain six fields:</p>
 <ol type="1">
